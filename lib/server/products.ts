@@ -1,6 +1,9 @@
 import "server-only"
 
 import type { ShopProduct } from "@/types/shop-product"
+import { error } from "console";
+
+/*
 
 const products: ShopProduct[] = [
     {
@@ -44,3 +47,34 @@ const products: ShopProduct[] = [
 export async function getShopProducts():Promise<ShopProduct[]> {
     return products
 }
+*/
+interface ProductsResponse {
+    success: boolean,
+    data: ShopProduct[]
+}
+
+ export async function getShopProducts(): Promise<ShopProduct[]> {
+    const baseUrl = process.env.API_BASE_URL
+
+    if(!baseUrl) {
+        throw new Error("API BASE URL is not configured")
+    }
+
+    const response = await fetch(`${baseUrl}/products`, {
+        cache: "no-store"
+    })
+
+    if(!response.ok) {
+        throw new Error(
+            `Failed to fetch products: HTTP ${response.status}`
+        )
+    }
+
+    const result: ProductsResponse = await response.json()
+
+    if (!result.success || !Array.isArray(result.data)) {
+        throw new Error("Invalid products API response")
+    }
+
+    return result.data
+ }
