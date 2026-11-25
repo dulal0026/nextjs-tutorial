@@ -21,23 +21,26 @@ export default function HomePage() {
               your home.
             </p>
 
-            <div>
+            <div className="mt-8 flex items-center justify-between">
+              <Link
+                href="/products"
+                className="inline-block rounded-xl bg-green-700 px-8 py-4 font-semibold text-white hover:bg-green-800"
+              >
+                Explore Products
+              </Link>
+              <Link
+                href="/server-demo-counter"
+                className="inline-block rounded-xl bg-green-700 px-8 py-4 font-semibold text-white hover:bg-green-800"
+              >
+                Counter
+              </Link>
                <Link
-              href="/products"
-              className="mt-8 inline-block rounded-xl bg-green-700 px-8 py-4 font-semibold text-white hover:bg-green-800"
-            >
-              Explore Products
-            </Link>
-            <Link
-              href="/server-demo-counter"
-              className="mt-8 mx-8 inline-block rounded-xl bg-green-700 px-8 py-4 font-semibold text-white hover:bg-green-800"
-            >
-              Counter
-            </Link>
-
+                href="/shop"
+                className="inline-block rounded-xl bg-green-700 px-8 py-4 font-semibold text-white hover:bg-green-800"
+              >
+                Shop Products
+              </Link>
             </div>
-
-           
           </div>
         </Container>
       </section>
