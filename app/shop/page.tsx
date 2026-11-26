@@ -2,7 +2,24 @@ import ShopProductCatalog from "@/components/ShopProductCatalog";
 import { getShopProducts } from "@/lib/server/products";
 
 
-export default async function ShopPage() {
+interface ShopPageProps {
+    searchParams: Promise <
+    {
+        search?: string | string[]
+        category?: string | string[]
+    }>
+}
+
+export default async function ShopPage(
+    {
+        searchParams
+    }: ShopPageProps
+) {
+
+    const query = await searchParams
+
+    const search = typeof query.search === "string" ? query.search : ""
+    const category = typeof query.category === "string" ? query.category : "All"
     const products = await getShopProducts()
 
     return (
@@ -17,7 +34,9 @@ export default async function ShopPage() {
                 </p>
 
             </div>
-            <ShopProductCatalog initialProducts={products}/>
+            <ShopProductCatalog initialProducts={products}
+            initialSearch={search}
+            initialCategory={category}/>
         </main>
     )
 }

@@ -48,19 +48,24 @@ export async function getShopProducts():Promise<ShopProduct[]> {
     return products
 }
 */
-interface ProductsResponse {
+interface ApiResponse<T> {
     success: boolean,
-    data: ShopProduct[]
+    data: T
+}
+
+function getApiBaseUrl(): string {
+  const baseUrl = process.env.API_BASE_URL;
+
+  if (!baseUrl) {
+    throw new Error("API_BASE_URL is not configured");
+  }
+
+  return baseUrl;
 }
 
  export async function getShopProducts(): Promise<ShopProduct[]> {
-    const baseUrl = process.env.API_BASE_URL
 
-    if(!baseUrl) {
-        throw new Error("API BASE URL is not configured")
-    }
-
-    const response = await fetch(`${baseUrl}/products`, {
+    const response = await fetch(`${getApiBaseUrl()}/products`, {
         cache: "no-store"
     })
 
@@ -70,11 +75,30 @@ interface ProductsResponse {
         )
     }
 
-    const result: ProductsResponse = await response.json()
+    const result: ApiResponse<ShopProduct[]> = await response.json()
 
     if (!result.success || !Array.isArray(result.data)) {
         throw new Error("Invalid products API response")
     }
 
     return result.data
+ }
+
+ export async function getShopProductById(
+    id: number
+ ): Promise<ShopProduct | null> {
+
+    const response = await fetch(
+        `${getApiBaseUrl()}/products/${id}`, {
+            cache: "no-store"
+        }
+    )
+
+    if (!response.ok) {
+    throw new Error(`Failed to fetch product: ${response.status}`);
+  }
+
+  const result: ApiResponse<ShopProduct> = await response.json()
+
+  return result.data
  }

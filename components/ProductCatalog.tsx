@@ -1,4 +1,5 @@
 "use client";
+
 import CartTitleEffect from "./CartTitleEffect";
 
 import type { Product } from "@/types/product";

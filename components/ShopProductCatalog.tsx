@@ -1,19 +1,35 @@
 
 "use client";
-
+import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import type { ShopProduct } from "@/types/shop-product";
+import { useCart } from "@/context/CartContext";
+
 
 interface ShopProductCatalogProps {
   initialProducts: ShopProduct[];
+  initialSearch?: string
+  initialCategory?: string
 }
 
 export default function ShopProductCatalog({
   initialProducts,
+  initialSearch = "",
+  initialCategory = "All"
 }: ShopProductCatalogProps) {
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
-  const [cart, setCart] = useState<Record<number, number>>({});
+
+
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const search = searchParams.get("search") ?? initialSearch;
+  const category = searchParams.get("category") ?? initialCategory;
+
+  const { addItem, cartCount } = useCart();
+
+ // const [cart, setCart] = useState<Record<number, number>>({});
 
   const categories = useMemo(
     () => [
@@ -35,7 +51,7 @@ export default function ShopProductCatalog({
       return matchesSearch && matchesCategory;
     });
   }, [initialProducts, search, category]);
-
+/*
   const cartCount = Object.values(cart).reduce(
     (total, quantity) => total + quantity,
     0
@@ -47,14 +63,37 @@ export default function ShopProductCatalog({
       [productId]: (previous[productId] ?? 0) + 1,
     }));
   }
+*/
+  function updateFilters(nextSearch: string, nextCategory: string) {
+  const params = new URLSearchParams(searchParams.toString());
 
+  if (nextSearch.trim()) {
+    params.set("search", nextSearch.trim());
+  } else {
+    params.delete("search");
+  }
+
+  if (nextCategory !== "All") {
+    params.set("category", nextCategory);
+  } else {
+    params.delete("category");
+  }
+
+  const query = params.toString();
+
+  router.replace(query ? `${pathname}?${query}` : pathname, {
+    scroll: false,
+  });
+}
   return (
     <section>
       <div className="mb-6 flex flex-col gap-4 sm:flex-row">
         <input
           type="search"
           value={search}
-          onChange={(event) => setSearch(event.target.value)}
+          onChange={(event) =>
+             updateFilters(event.target.value, category)
+            }
           placeholder="Search products..."
           aria-label="Search products"
           className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 sm:flex-1"
@@ -62,7 +101,7 @@ export default function ShopProductCatalog({
 
         <select
           value={category}
-          onChange={(event) => setCategory(event.target.value)}
+          onChange={(event) => updateFilters(search, event.target.value)}
           aria-label="Filter by category"
           className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 sm:w-52"
         >
@@ -89,7 +128,13 @@ export default function ShopProductCatalog({
             </p>
 
             <h2 className="mt-2 text-xl font-bold text-gray-900">
+               <Link
+                href={`/shop/${product.id}`}
+                className="hover:text-green-700 hover:underline"
+              >
               {product.name}
+
+              </Link>
             </h2>
 
             <p className="mt-3 text-lg font-semibold text-gray-900">
@@ -103,7 +148,15 @@ export default function ShopProductCatalog({
             <button
               type="button"
               disabled={!product.inStock}
-              onClick={() => addToCart(product.id)}
+              //onClick={() => addToCart(product.id)}
+              onClick={ () => 
+                addItem({
+                  productId: product.id,
+                  name: product.name,
+                  price: product.price
+                })
+
+              }
               className="mt-5 w-full rounded-lg bg-green-700 px-4 py-3 font-medium text-white hover:bg-green-800 disabled:cursor-not-allowed disabled:bg-gray-400"
             >
               Add to Cart

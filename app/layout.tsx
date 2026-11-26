@@ -2,11 +2,31 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import "./globals.css";
+import { CartProvider } from "@/context/CartContext";
 
 export const metadata: Metadata = {
   title: "Tree Shop",
   description: "Tree Shop e-commerce website",
 };
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body>
+        <CartProvider>
+              <Navbar />
+          {children}
+        </CartProvider>
+      </body>
+    </html>
+  );
+}
+
+/*
 
 export default function RootLayout({
   children,
@@ -27,3 +47,7 @@ export default function RootLayout({
     </html>
   );
 }
+
+
+
+*/

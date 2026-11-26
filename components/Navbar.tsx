@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import CartBadge from "@/components/CartBadge";
 
 const links = [
   { href: "/", label: "Home" },
@@ -43,6 +44,7 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
+            <CartBadge />
           </div>
 
           <button
@@ -73,6 +75,7 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
+            <CartBadge />
           </div>
         )}
       </nav>
